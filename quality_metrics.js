@@ -1,3 +1,10 @@
+var weekly = 0;
+if (process.argv[2]) {
+  weekly = parseInt(process.argv[2]);
+}
+
+let isDebugRun = process.argv.includes("--debug");
+
 const axios = require('axios');
 
 const bugzillaProducts = [
@@ -15,144 +22,77 @@ const bugzillaProducts = [
   "WebExtensions",
 ];
 
-var weekly = 0;
-if (process.argv[2]) {
-  weekly = parseInt(process.argv[2]);
-}
+const timeWindowsAvg = [
+  {
+    "name": "Weekly",
+    "substr": "&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
+    "divby": 1,
+  },
+  {
+    "name": "Avg Last 5 Wks",
+    "substr": "&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
+    "divby": 5,
+  },
+  {
+    "name": "Avg Last 13 Wks",
+    "substr": "&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
+    "divby": 13,
+  },
+];
 
-let isDebugRun = process.argv.includes("--debug");
+let timeWindowsMedian = [
+  {
+    "name": "Weekly",
+    "substr": "&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
+    "divby": 1,
+  },
+  {
+    "name": "Median Last 5 Wks",
+    "substr": "&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
+    "divby": 5,
+  },
+  {
+    "name": "Median Last 13 Wks",
+    "substr": "&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
+    "divby": 13,
+  },
+];
 
 const newQueries = [
   { "name":"Bugs,New",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=[Bug%20creation]",
-    "versions":[
-      { "name":"Weekly",
-        "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      	"divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-        "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      	"divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-        "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-        "divby":13
-      }]
+    "versions": timeWindowsAvg,
   },
   { "name":"Bugs,New:blocker,critical",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&bug_severity=blocker&bug_severity=critical&chfield=%5BBug%20creation%5D",
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      "divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":13
-      }]
+    "versions": timeWindowsAvg,
   },
   { "name":"Bugs,New:crash",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&keywords=crash&keywords_type=allwords&chfield=%5BBug%20creation%5D",
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      "divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":13
-      }]
+    "versions": timeWindowsAvg,
   },
   { "name":"Bugs,New:regression",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&keywords=regression&keywords_type=allwords&chfield=[Bug%20creation]",
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      "divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":13
-      }]
+    "versions": timeWindowsAvg,
   }
 ];
 
 const closedQueries = [
   { "name":"Bugs,Closed",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      "divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":13
-      }]
+    "versions": timeWindowsAvg,
   },
   { "name":"Bugs,Closed:blocker,critical",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&bug_severity=blocker&bug_severity=critical&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      "divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":13
-      }]
+    "versions": timeWindowsAvg,
   },
   { "name":"Bugs,Closed:crash",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&keywords=crash&keywords_type=allwords&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      "divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":13
-      }]
+    "versions": timeWindowsAvg,
   },
   { "name":"Bugs,Closed:regression",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&keywords=regression&keywords_type=allwords&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-      "divby":1
-      },
-      { "name":"Avg Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":5
-      },
-      { "name":"Avg Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-      "divby":13
-      }]
+    "versions": timeWindowsAvg,
   }
 ];
 
@@ -181,16 +121,7 @@ const closedMedianQueries = [
   { "name":"Bugs,Closed:avg time to fix",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,cf_last_resolved,creation_time,keywords&bug_type=defect&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "mapper":timeToFix,
-    "versions":[
-      { "name":"Weekly",
-      "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws"
-      },
-      { "name":"Median Last 5 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws"
-    },
-      { "name":"Median Last 13 Wks",
-      "substr":"&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws"
-    }]
+    "versions": timeWindowsMedian,
   }
 ];
 
