@@ -160,7 +160,10 @@ function runCountQueries(queries) {
     if (q.versions) {
       q.versions.forEach(function(v) {
         getBugzillaCount(q.str+v.substr, 0, 0, function(count) {
-            console.log(q.name+","+v.name+" = "+(count/v.divby));
+            let numberValue = count/v.divby;
+            // Show numbers >= 10 without decimal, < 10 with one decimal digit.
+            let numberString = numberValue >= 10 ? Math.round(numberValue) : numberValue.toFixed(1);
+            console.log(q.name+","+v.name+" = "+numberString);
           });
       });
     } else {
