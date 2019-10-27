@@ -20,6 +20,8 @@ if (process.argv[2]) {
   weekly = parseInt(process.argv[2]);
 }
 
+let isDebugRun = process.argv.includes("--debug");
+
 const newQueries = [
   { "name":"Bugs,New",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=[Bug%20creation]",
@@ -240,6 +242,9 @@ function runCountQueries(queries) {
 
 function getBugzillaCount(query, startId, count, callback) {
   query += getProductQueryString();
+  if (isDebugRun) {
+    console.log(`Requesting: ${query}`);
+  }
   axios.get(query+"&f99=bug_id&o99=greaterthan&v99="+startId)
     .then(response => {
       var data = response.data.bugs;
@@ -256,6 +261,9 @@ function getBugzillaCount(query, startId, count, callback) {
 
 function getBugzillaMedian(query, startId, mapper, mapped, count, callback) {
   query += getProductQueryString();
+  if (isDebugRun) {
+    console.log(`Requesting: ${query}`);
+  }
   axios.get(query+"&f99=bug_id&o99=greaterthan&v99="+startId)
     .then(response => {
       var data = response.data.bugs;
@@ -279,6 +287,9 @@ function getBugzillaMedian(query, startId, mapper, mapped, count, callback) {
 /* dead code start */
 function getBugzillaAvg(query, startId, reducer, sum, count, callback) {
   query += getProductQueryString();
+  if (isDebugRun) {
+    console.log(`Requesting: ${query}`);
+  }
   axios.get(query+"&f99=bug_id&o99=greaterthan&v99="+startId)
     .then(response => {
       var data = response.data.bugs;
