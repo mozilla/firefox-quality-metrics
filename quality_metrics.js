@@ -1,5 +1,20 @@
 const axios = require('axios');
 
+const bugzillaProducts = [
+  "Core",
+  "DevTools",
+  "External Software Affecting Firefox",
+  "Firefox",
+  "Firefox Build System",
+  "Firefox for Android",
+  "Firefox for iOS",
+  "GeckoView",
+  "NSPR",
+  "NSS",
+  "Toolkit",
+  "WebExtensions",
+];
+
 var weekly = 0;
 if (process.argv[2]) {
   weekly = parseInt(process.argv[2]);
@@ -7,7 +22,7 @@ if (process.argv[2]) {
 
 const newQueries = [
   { "name":"Bugs,New",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=[Bug%20creation]",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=[Bug%20creation]",
     "versions":[
       { "name":"Weekly",
         "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -23,7 +38,7 @@ const newQueries = [
       }]
   },
   { "name":"Bugs,New:blocker,critical",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&bug_severity=blocker&bug_severity=critical&chfield=%5BBug%20creation%5D",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&bug_severity=blocker&bug_severity=critical&chfield=%5BBug%20creation%5D",
     "versions":[
       { "name":"Weekly",
       "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -39,7 +54,7 @@ const newQueries = [
       }]
   },
   { "name":"Bugs,New:crash",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&keywords=crash&keywords_type=allwords&chfield=%5BBug%20creation%5D",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&keywords=crash&keywords_type=allwords&chfield=%5BBug%20creation%5D",
     "versions":[
       { "name":"Weekly",
       "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -55,7 +70,7 @@ const newQueries = [
       }]
   },
   { "name":"Bugs,New:regression",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&keywords=regression&keywords_type=allwords&chfield=[Bug%20creation]",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&keywords=regression&keywords_type=allwords&chfield=[Bug%20creation]",
     "versions":[
       { "name":"Weekly",
       "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -74,7 +89,7 @@ const newQueries = [
 
 const closedQueries = [
   { "name":"Bugs,Closed",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "versions":[
       { "name":"Weekly",
       "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -90,7 +105,7 @@ const closedQueries = [
       }]
   },
   { "name":"Bugs,Closed:blocker,critical",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&bug_severity=blocker&bug_severity=critical&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&bug_severity=blocker&bug_severity=critical&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "versions":[
       { "name":"Weekly",
       "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -106,7 +121,7 @@ const closedQueries = [
       }]
   },
   { "name":"Bugs,Closed:crash",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&keywords=crash&keywords_type=allwords&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&keywords=crash&keywords_type=allwords&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "versions":[
       { "name":"Weekly",
       "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -122,7 +137,7 @@ const closedQueries = [
       }]
   },
   { "name":"Bugs,Closed:regression",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&keywords=regression&keywords_type=allwords&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&keywords=regression&keywords_type=allwords&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "versions":[
       { "name":"Weekly",
       "substr":"&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
@@ -141,19 +156,19 @@ const closedQueries = [
 
 const openQueries = [
   { "name":"Bugs,Open:blocker,critical",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&bug_severity=blocker&bug_severity=critical&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&bug_severity=blocker&bug_severity=critical&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
   },
   { "name":"Bugs,Open:regression",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&keywords=regression&keywords_type=allwords&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&keywords=regression&keywords_type=allwords&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
   },
   { "name":"Bugs,Open:crash",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&keywords=crash&keywords_type=allwords&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&keywords=crash&keywords_type=allwords&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
   },
   { "name":"Bugs,Open:major,normal",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&bug_severity=major&bug_severity=normal&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&bug_severity=major&bug_severity=normal&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
   },
   { "name":"Bugs,Open:minor",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&bug_severity=minor&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,creation_time,keywords&bug_type=defect&bug_severity=minor&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
   }
 ];
 
@@ -162,7 +177,7 @@ const timeToFix = (x) => (+(Number((new Date(x.cf_last_resolved)-new Date(x.crea
 
 const closedMedianQueries = [
   { "name":"Bugs,Closed:avg time to fix",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,cf_last_resolved,creation_time,keywords&bug_type=defect&product=Core&product=DevTools&product=External%20Software%20Affecting%20Firefox&product=Firefox&product=Firefox%20Build%20System&product=Firefox%20for%20Android&product=Firefox%20for%20iOS&product=GeckoView&product=NSPR&product=NSS&product=Toolkit&product=WebExtensions&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status,product,component,cf_last_resolved,creation_time,keywords&bug_type=defect&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "mapper":timeToFix,
     "versions":[
       { "name":"Weekly",
@@ -182,6 +197,14 @@ runCountQueries(newQueries);
 runCountQueries(closedQueries);
 runMedianQueries(closedMedianQueries);
 runCountQueries(openQueries);
+
+function getProductQueryString() {
+  let queryPart = "";
+  for (let product of bugzillaProducts) {
+    queryPart += "&product=" + encodeURIComponent(product);
+  }
+  return queryPart;
+}
 
 function runMedianQueries(queries) {
   queries.forEach(function(q) {
@@ -216,6 +239,7 @@ function runCountQueries(queries) {
 }
 
 function getBugzillaCount(query, startId, count, callback) {
+  query += getProductQueryString();
   axios.get(query+"&f99=bug_id&o99=greaterthan&v99="+startId)
     .then(response => {
       var data = response.data.bugs;
@@ -231,6 +255,7 @@ function getBugzillaCount(query, startId, count, callback) {
 }
 
 function getBugzillaMedian(query, startId, mapper, mapped, count, callback) {
+  query += getProductQueryString();
   axios.get(query+"&f99=bug_id&o99=greaterthan&v99="+startId)
     .then(response => {
       var data = response.data.bugs;
@@ -251,7 +276,9 @@ function getBugzillaMedian(query, startId, mapper, mapped, count, callback) {
     });
 }
 
+/* dead code start */
 function getBugzillaAvg(query, startId, reducer, sum, count, callback) {
+  query += getProductQueryString();
   axios.get(query+"&f99=bug_id&o99=greaterthan&v99="+startId)
     .then(response => {
       var data = response.data.bugs;
@@ -270,4 +297,4 @@ function getBugzillaAvg(query, startId, reducer, sum, count, callback) {
       console.log(error);
     });
 }
-
+/* dead code end */
