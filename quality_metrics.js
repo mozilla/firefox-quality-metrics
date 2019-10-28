@@ -63,8 +63,12 @@ const newQueries = [
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=[Bug%20creation]",
     "versions": timeWindowsAvg,
   },
-  { "name":"Bugs,New:blocker,critical",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&bug_severity=blocker&bug_severity=critical&chfield=%5BBug%20creation%5D",
+  { "name":"Bugs,New:blocker",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&bug_severity=blocker&chfield=%5BBug%20creation%5D",
+    "versions": timeWindowsAvg,
+  },
+  { "name":"Bugs,New:critical",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&bug_severity=critical&chfield=%5BBug%20creation%5D",
     "versions": timeWindowsAvg,
   },
   { "name":"Bugs,New:crash",
@@ -82,8 +86,12 @@ const closedQueries = [
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "versions": timeWindowsAvg,
   },
-  { "name":"Bugs,Closed:blocker,critical",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&bug_severity=blocker&bug_severity=critical&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
+  { "name":"Bugs,Closed:blocker",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&bug_severity=blocker&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
+    "versions": timeWindowsAvg,
+  },
+  { "name":"Bugs,Closed:critical",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&bug_severity=critical&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED&chfield=cf_last_resolved",
     "versions": timeWindowsAvg,
   },
   { "name":"Bugs,Closed:crash",
@@ -97,8 +105,11 @@ const closedQueries = [
 ];
 
 const openQueries = [
-  { "name":"Bugs,Open:blocker,critical",
-    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&bug_severity=blocker&bug_severity=critical&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
+  { "name":"Bugs,Open:blocker",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&bug_severity=blocker&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
+  },
+  { "name":"Bugs,Open:critical",
+    "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&bug_severity=critical&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
   },
   { "name":"Bugs,Open:regression",
     "str":"https://bugzilla.mozilla.org/rest/bug?include_fields=id&bug_type=defect&keywords=regression&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED"
