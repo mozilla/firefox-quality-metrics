@@ -7,6 +7,12 @@ for (let pos = 2; pos < process.argv.length; pos++) {
 
 let isDebugRun = process.argv.includes("--debug");
 
+const timewindowsWeeks = [
+  1,
+  5,
+  13,
+];
+
 const axios = require('axios');
 
 const bugzillaProducts = [
@@ -31,52 +37,52 @@ const bzAPINewUndismissed = "&resolution=---&resolution=FIXED&resolution=INACTIV
 const timeWindowsAvg = [
   {
     "name": "Weekly",
-    "substr": "&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-    "divby": 1,
+    "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[0])+"ws&chfieldto=-"+weekly+"ws",
+    "divby": timewindowsWeeks[0],
   },
   {
-    "name": "Avg Last 5 Wks",
-    "substr": "&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-    "divby": 5,
+    "name": `Avg Last ${timewindowsWeeks[1]} Wks`,
+    "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[1])+"ws&chfieldto=-"+weekly+"ws",
+    "divby": timewindowsWeeks[1],
   },
   {
-    "name": "Avg Last 13 Wks",
-    "substr": "&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-    "divby": 13,
+    "name": `Avg Last ${timewindowsWeeks[2]} Wks`,
+    "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[2])+"ws&chfieldto=-"+weekly+"ws",
+    "divby": timewindowsWeeks[2],
   },
 ];
 
 let timeWindowsMedian = [
   {
     "name": "Weekly",
-    "substr": "&chfieldfrom=-"+(weekly+1)+"ws&chfieldto=-"+weekly+"ws",
-    "divby": 1,
+    "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[0])+"ws&chfieldto=-"+weekly+"ws",
+    "divby": timewindowsWeeks[0],
   },
   {
     "name": "Last 5 Wks",
-    "substr": "&chfieldfrom=-"+(weekly+6)+"ws&chfieldto=-"+(weekly+1)+"ws",
-    "divby": 5,
+    "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[1])+"ws&chfieldto=-"+weekly+"ws",
+    "divby": timewindowsWeeks[1],
   },
   {
     "name": "Last 13 Wks",
-    "substr": "&chfieldfrom=-"+(weekly+14)+"ws&chfieldto=-"+(weekly+1)+"ws",
-    "divby": 13,
+    "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[2])+"ws&chfieldto=-"+weekly+"ws",
+    "divby": timewindowsWeeks[2],
   },
 ];
 
 function outputStructureTimeWindow() {
   return {
     "Weekly": undefined,
-    "Avg Last 5 Wks": undefined,
-    "Avg Last 13 Wks": undefined,
+    [`Avg Last ${timewindowsWeeks[1]} Wks`]: undefined,
+    [`Avg Last ${timewindowsWeeks[2]} Wks`]: undefined,
   }
 };
 
 function outputStructureTimeWindowMedian() {
   return {
     "Weekly": undefined,
-    "Last 5 Wks": undefined,
-    "Last 13 Wks": undefined,
+    [`Last ${timewindowsWeeks[1]} Wks`]: undefined,
+    [`Last ${timewindowsWeeks[2]} Wks`]: undefined,
   }
 };
 
