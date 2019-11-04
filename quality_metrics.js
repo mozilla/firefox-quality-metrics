@@ -33,6 +33,7 @@ const bugzillaProducts = [
 const bzAPIOpen = "&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED";
 const bzAPIClosed = "&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED";
 const bzAPINewUndismissed = "&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED";
+const bzAPINoIntermittents = "&keywords=intermittent-failure&keywords_type=nowords";
 
 const timeWindowsAvg = [
   {
@@ -59,12 +60,12 @@ let timeWindowsMedian = [
     "divby": timewindowsWeeks[0],
   },
   {
-    "name": "Last 5 Wks",
+    "name": `Last ${timewindowsWeeks[1]} Wks`,
     "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[1])+"ws&chfieldto=-"+weekly+"ws",
     "divby": timewindowsWeeks[1],
   },
   {
-    "name": "Last 13 Wks",
+    "name": `Last ${timewindowsWeeks[2]} Wks`,
     "substr": "&chfieldfrom=-"+(weekly+timewindowsWeeks[2])+"ws&chfieldto=-"+weekly+"ws",
     "divby": timewindowsWeeks[2],
   },
@@ -114,7 +115,7 @@ const outputStructure = {
 
 const newQueries = [
   { "name": ["Bugs, Incoming", "New"],
-    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&chfield=[Bug%20creation]&count_only=1`,
+    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}${bzAPINoIntermittents}&chfield=[Bug%20creation]&count_only=1`,
     "versions": timeWindowsAvg,
   },
   { "name": ["Bugs, Incoming", "New: blocker"],
@@ -137,7 +138,7 @@ const newQueries = [
 
 const closedQueries = [
   { "name": ["Bugs, Outgoing", "Closed"],
-    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&chfield=cf_last_resolved&count_only=1`,
+    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}${bzAPINoIntermittents}&chfield=cf_last_resolved&count_only=1`,
     "versions": timeWindowsAvg,
   },
   { "name": ["Bugs, Outgoing", "Closed: blocker"],
@@ -172,10 +173,10 @@ const openQueries = [
     "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect&keywords=crash${bzAPIOpen}&count_only=1`,
   },
   { "name": ["Bugs, Open", "normal"],
-    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect&bug_severity=major&bug_severity=normal${bzAPIOpen}&count_only=1`,
+    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect&bug_severity=major&bug_severity=normal${bzAPIOpen}${bzAPINoIntermittents}&count_only=1`,
   },
   { "name": ["Bugs, Open", "minor"],
-    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect&bug_severity=minor${bzAPIOpen}&count_only=1`,
+    "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect&bug_severity=minor${bzAPIOpen}${bzAPINoIntermittents}&count_only=1`,
   }
 ];
 
@@ -186,7 +187,7 @@ const timeToFix = (x) => (+(Number((new Date(x.cf_last_resolved)-new Date(x.crea
 
 const closedMedianQueries = [
   { "name": ["Bugs, Outgoing", "Closed: median time to fix (days)"],
-    "str": `https://bugzilla.mozilla.org/rest/bug?include_fields=id,cf_last_resolved,creation_time&bug_type=defect${bzAPIClosed}&chfield=cf_last_resolved`,
+    "str": `https://bugzilla.mozilla.org/rest/bug?include_fields=id,cf_last_resolved,creation_time&bug_type=defect${bzAPIClosed}${bzAPINoIntermittents}&chfield=cf_last_resolved`,
     "mapper":timeToFix,
     "versions": timeWindowsMedian,
   }
