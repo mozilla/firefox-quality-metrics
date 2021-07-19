@@ -32,7 +32,7 @@ const bugzillaProducts = [
 
 const bzAPIOpen = "&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED";
 const bzAPIClosed = "&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED";
-const bzAPIFixed = "&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED";
+const bzAPIFixed = "&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&email1=nobody%40mozilla.org&emailtype1=notequals&emailassigned_to1=1";
 const bzAPINewUndismissed = "&resolution=---&resolution=FIXED&resolution=INACTIVE&resolution=INCOMPLETE&resolution=SUPPORT&resolution=EXPIRED&resolution=MOVED";
 const bzAPINoIntermittents = "&keywords=intermittent-failure&keywords_type=nowords";
 
