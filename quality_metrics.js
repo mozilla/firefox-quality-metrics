@@ -7,13 +7,16 @@ for (let pos = 2; pos < process.argv.length; pos++) {
 
 let isDebugRun = process.argv.includes("--debug");
 
+const axios = require('axios');
+
+let CENTRAL_VERSION = undefined;
+const CENTRAL_VERSION_URL = 'https://fx-trains.herokuapp.com/api/release/schedule/?version=nightly';
+
 const timewindowsWeeks = [
   1,
   5,
   13,
 ];
-
-const axios = require('axios');
 
 const bugzillaProducts = [
   "Core",
@@ -95,6 +98,9 @@ const outputStructure = {
     "New: critical / S2": outputStructureTimeWindow(),
     "New: crash": outputStructureTimeWindow(),
     "New: regression": outputStructureTimeWindow(),
+    "New: regression: central": {"Weekly": undefined},
+    "New: regression: beta": {"Weekly": undefined},
+    "New: regression: release": {"Weekly": undefined},
   },
   "Bugs, Outgoing": {
     "Closed": outputStructureTimeWindow(),
@@ -102,6 +108,9 @@ const outputStructure = {
     "Closed: critical / S2": outputStructureTimeWindow(),
     "Closed: crash": outputStructureTimeWindow(),
     "Closed: regression": outputStructureTimeWindow(),
+    "Closed: regression: central": {"Weekly": undefined},
+    "Closed: regression: beta": {"Weekly": undefined},
+    "Closed: regression: release": {"Weekly": undefined},
     "Closed: median time to fix (days)": outputStructureTimeWindowMedian(),
   },
   "Bugs, Open": {
@@ -134,7 +143,22 @@ const newQueries = [
   { "name": ["Bugs, Incoming", "New: regression"],
     "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&keywords=regression&chfield=[Bug%20creation]&count_only=1`,
     "versions": timeWindowsAvg,
-  }
+  },
+  { "name": ["Bugs, Incoming", "New: regression: central"],
+    get str() {
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 1}&keywords=regression&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&keywords_type=allwords&bug_type=defect&f1=cf_status_firefox${CENTRAL_VERSION}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+    },
+  },
+  { "name": ["Bugs, Incoming", "New: regression: beta"],
+    get str() {
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 2}&keywords=regression&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&keywords_type=allwords&bug_type=defect&f1=cf_status_firefox${CENTRAL_VERSION - 1}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+    },
+  },
+  { "name": ["Bugs, Incoming", "New: regression: release"],
+    get str() {
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&keywords=regression&keywords_type=allwords&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 3}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 2}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+    },
+  },
 ];
 
 const closedQueries = [
@@ -157,7 +181,22 @@ const closedQueries = [
   { "name": ["Bugs, Outgoing", "Closed: regression"],
     "str": `https://bugzilla.mozilla.org/rest/bug?bug_type=defect&keywords=regression${bzAPIClosed}&chfield=cf_last_resolved&count_only=1`,
     "versions": timeWindowsAvg,
-  }
+  },
+  { "name": ["Bugs, Outgoing", "Closed: regression: central"],
+    get str() {
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 1}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+    },
+  },
+  { "name": ["Bugs, Outgoing", "Closed: regression: beta"],
+    get str() {
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 2}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 1}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+    },
+  },
+  { "name": ["Bugs, Outgoing", "Closed: regression: release"],
+    get str() {
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 3}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 2}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+    },
+  },
 ];
 
 const openQueries = [
@@ -196,12 +235,6 @@ const closedMedianQueries = [
 
 let requestPromises = [];
 
-// Run Count Queries
-runCountQueries(newQueries);
-runCountQueries(closedQueries);
-runMedianQueries(closedMedianQueries);
-runCountQueries(openQueries);
-
 /* Some promises schedule other promises which get added later to the promises
    list. Check if the number of resolved promises matches the count of all
    promises. */
@@ -216,8 +249,23 @@ function requestPromisesCallback() {
   }
 }
 
-axios.all(requestPromises)
-  .then(requestPromisesCallback);
+axios.get(CENTRAL_VERSION_URL)
+     .then(response => {
+        let data = response.data;
+        let centralVersionCurrent = parseInt((data["version"].split("."))[0]);
+        let centralStart = (data["nightly_start"].split(" "))[0];
+        let today = new Date();
+        let daysToGoBackForMonday = today.getDay() > 0 ? today.getDay() - 1 : 6;
+        today.setDate(today.getDate() - daysToGoBackForMonday);
+        let mondayThisWeek = (today.toISOString().split("T"))[0];
+        CENTRAL_VERSION = mondayThisWeek <= centralStart ? centralVersionCurrent - 1 : centralVersionCurrent;
+
+        runCountQueries(newQueries);
+        runCountQueries(closedQueries);
+        runMedianQueries(closedMedianQueries);
+        runCountQueries(openQueries);
+      })
+      .then(requestPromisesCallback);
 
 function getProductQueryString() {
   let queryPart = "";
@@ -256,7 +304,8 @@ function runCountQueries(queries) {
       });
     } else {
       getBugzillaCount(q.str, function(count) {
-        outputStructure[q.name[0]][q.name[1]]["Current"] = count;
+        let key = (Object.keys(outputStructure[q.name[0]][q.name[1]]))[0];
+        outputStructure[q.name[0]][q.name[1]][key] = count;
       });
     }
   });
