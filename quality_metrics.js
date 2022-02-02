@@ -146,17 +146,17 @@ const newQueries = [
   },
   { "name": ["Bugs, Incoming", "New: regression: central"],
     get str() {
-      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 1}&keywords=regression&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&keywords_type=allwords&bug_type=defect&f1=cf_status_firefox${CENTRAL_VERSION}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 1}&keywords=regression&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&keywords_type=allwords&bug_type=defect&f1=cf_status_firefox${CENTRAL_VERSION}&v2=affected%20wontfix%20fixed%20verified&chfield=[Bug%20creation]&count_only=1`;
     },
   },
   { "name": ["Bugs, Incoming", "New: regression: beta"],
     get str() {
-      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 2}&keywords=regression&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&keywords_type=allwords&bug_type=defect&f1=cf_status_firefox${CENTRAL_VERSION - 1}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 2}&keywords=regression&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&keywords_type=allwords&bug_type=defect&f1=cf_status_firefox${CENTRAL_VERSION - 1}&v2=affected%20wontfix%20fixed%20verified&chfield=[Bug%20creation]&count_only=1`;
     },
   },
   { "name": ["Bugs, Incoming", "New: regression: release"],
     get str() {
-      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&keywords=regression&keywords_type=allwords&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 3}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 2}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPINewUndismissed}&keywords=regression&keywords_type=allwords&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 3}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 2}&v2=affected%20wontfix%20fixed%20verified&chfield=[Bug%20creation]&count_only=1`;
     },
   },
 ];
@@ -184,17 +184,17 @@ const closedQueries = [
   },
   { "name": ["Bugs, Outgoing", "Closed: regression: central"],
     get str() {
-      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 1}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 1}&v1=fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
     },
   },
   { "name": ["Bugs, Outgoing", "Closed: regression: beta"],
     get str() {
-      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 2}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 1}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 2}&v1=fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 1}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
     },
   },
   { "name": ["Bugs, Outgoing", "Closed: regression: release"],
     get str() {
-      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 3}&v1=affected%20wontfix%20fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 2}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
+      return `https://bugzilla.mozilla.org/rest/bug?bug_type=defect${bzAPIClosed}&keywords=regression&keywords_type=allwords&chfield=cf_last_resolved&o1=anywords&f2=cf_status_firefox${CENTRAL_VERSION - 3}&v1=fixed%20verified&chfieldfrom=-1ws&o2=nowords&chfieldto=-0ws&f1=cf_status_firefox${CENTRAL_VERSION - 2}&v2=affected%20wontfix%20fixed%20verified&count_only=1`;
     },
   },
 ];
